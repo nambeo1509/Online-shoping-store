@@ -1,0 +1,227 @@
+﻿@using System.Web.Mvc.Html
+@using OnlineShoppingSystem.Models
+
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_ShoppingLayout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="../../Content/ShoppingUI/styles/checkout.css">
+<link rel="stylesheet" type="text/css" href="../../Content/ShoppingUI/styles/checkout_responsive.css">
+<script src="../../Content/ShoppingUI/js/checkout.js"></script>
+
+<div class="super_container">
+<header class="header">
+    <div class="header_container">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="header_content d-flex flex-row align-items-center justify-content-start">
+                        <div class="logo">@Html.ActionLink("LAPTOP", "Home", "Home")</div>
+                        <nav class="main_nav">
+                            <ul>
+                                <li>@Html.ActionLink("Trang chủ", "Home", "Home")</li>
+                                <li class="hassubs">
+                                    <a href="#">Loại mặt hàng</a>
+                                    <ul>
+                                        @{
+                                            var listCategories = (List<Category>) Session["Category"];
+                                            foreach (var item in listCategories)
+                                            {
+                                                <li><a href=@Url.Action("ShowCategory","Category", new { id = item.CategoryID })>@item.CategoryName</a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                                <li><a href="#">Hàng đang sale</a></li>
+                                <li><a href="#">Liên hệ</a></li>
+                            </ul>
+                        </nav>
+                        <div class="header_extra ml-auto">
+                            @{
+                                var data = (string) Session["Name"];
+                            }
+                            @if (data == null)
+                            {
+                                @Html.ActionLink("Đăng nhập", "Login", "Login")
+                                <span>&nbsp;|&nbsp;</span>
+                            }
+                            else
+                            {
+                                <div>Xin chào <a href="@Url.Action("DetailAccount", "Account")">@data</a> | @Html.ActionLink("Đăng xuất", "Logout", "Login")</div>
+                            }
+                            <div class="shopping_cart">
+                                <a href=@Url.Action("ShowCart", "Cart")>
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                         viewBox="0 0 489 489" style="enable-background: new 0 0 489 489;" xml:space="preserve">
+                                    <g>
+                                    <path d="M440.1,422.7l-28-315.3c-0.6-7-6.5-12.3-13.4-12.3h-57.6C340.3,42.5,297.3,0,244.5,0s-95.8,42.5-96.6,95.1H90.3
+													c-7,0-12.8,5.3-13.4,12.3l-28,315.3c0,0.4-0.1,0.8-0.1,1.2c0,35.9,32.9,65.1,73.4,65.1h244.6c40.5,0,73.4-29.2,73.4-65.1
+													C440.2,423.5,440.2,423.1,440.1,422.7z M244.5,27c37.9,0,68.8,30.4,69.6,68.1H174.9C175.7,57.4,206.6,27,244.5,27z M366.8,462
+													H122.2c-25.4,0-46-16.8-46.4-37.5l26.8-302.3h45.2v41c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-41h139.3v41
+													c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-41h45.2l26.9,302.3C412.8,445.2,392.1,462,366.8,462z" />
+                                        </g>
+                                    </svg>
+                                    @{
+                                        var numberProduct = 0;
+                                        if (Session["NumberOfProductInCart"] != null)
+                                        {
+                                            numberProduct = (int) Session["NumberOfProductInCart"];
+                                        }
+                                    }
+                                    <div>Giỏ hàng @if(numberProduct != 0) { <span>(@numberProduct)</span> }</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social -->
+    <div class="header_social">
+        <ul>
+            <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+            <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+        </ul>
+    </div>
+</header>
+    
+<!-- Home -->
+
+<div class="home">
+    <div class="home_container">
+        <div class="home_background" style="background-image:url(../../Content/ShoppingUI/images/searchproductheader.jpg)"></div>
+        <div class="home_content_container">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="home_content">
+                            <div class="breadcrumbs">
+                                <ul>
+                                    <li>@Html.ActionLink("Trang chủ", "Home", "Home")</li>
+                                    <li>Tìm kiếm sản phẩm</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<!-- Products -->
+@{
+    var searchedProduct = (List<Product>) ViewBag.SearchKey;
+}
+<div class="products">
+    @{
+        if (searchedProduct.Count != 0)
+        {
+            <div style="font-size: 150%; text-align: center; color: black;">Tìm thấy <b>@searchedProduct.Count</b> sản phẩm</div>
+            <br/><br/>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="product_grid">
+                            <!-- Product -->
+                            @foreach (var item in searchedProduct)
+                            {
+                                <div class="product">
+                                    <div class="product_image"><a href="@Url.Action("ShowDetailProduct", "ProductDetails", new {id = item.ProductID})"><img src="@Url.Content("~/Content/ShoppingUI/images/" + item.Image)" alt=""></a></div>
+                                    <div class="product_content">
+                                        <div class="product_title"><a href=@Url.Action("ShowDetailProduct", "ProductDetails", new {id = item.ProductID})>@item.ProductName</a></div>
+                                        <div class="product_price">@string.Format("{0:0,0}", item.Price) đ</div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div style="font-size: 150%; text-align: center; color: black;">Không tìm thấy sản phẩm</div>
+            <div class="newsletter_content text-center">
+                <button class="newsletter_button trans_200"><span>@Html.ActionLink("Về trang chủ", "Home", "Home")</span></button>
+            </div>
+        }
+    }
+    
+</div>
+    
+<!-- Icon Boxes -->
+
+<div class="icon_boxes">
+    <div class="container">
+        <div class="row icon_box_row">
+
+            <!-- Icon Box -->
+            <div class="col-lg-4 icon_box_col">
+                <div class="icon_box">
+                    <div class="icon_box_image"><img src="../../Content/ShoppingUI/images/icon_1.svg" alt=""></div>
+                    <div class="icon_box_title">Vận chuyển miễn phí</div>
+                    <div class="icon_box_text">
+                        <p>Bạn không phải lo lắng về phí vận chuyển khi mua hàng của chúng tôi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Icon Box -->
+            <div class="col-lg-4 icon_box_col">
+                <div class="icon_box">
+                    <div class="icon_box_image"><img src="../../Content/ShoppingUI/images/icon_2.svg" alt=""></div>
+                    <div class="icon_box_title">Trả lại hàng trong vòng 7 ngày</div>
+                    <div class="icon_box_text">
+                        <p>Khi có lỗi sản phẩm, khách hàng được mang trả lại hoặc đổi sản phẩm cùng giá trong vòng 7 ngày kể từ khi mua hàng.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Icon Box -->
+            <div class="col-lg-4 icon_box_col">
+                <div class="icon_box">
+                    <div class="icon_box_image"><img src="../../Content/ShoppingUI/images/icon_3.svg" alt=""></div>
+                    <div class="icon_box_title">Hỗ trợ tư vấn 24/24</div>
+                    <div class="icon_box_text">
+                        <p>Chúng tôi luôn luôn sẵn sàng tư vấn những sản phẩm tốt và phù hợp với yêu cầu khách hàng bất cứ khi nào!</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Newsletter -->
+
+<div class="newsletter">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="newsletter_border"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="newsletter_content text-center">
+                    <div class="newsletter_title">Đăng ký nhận tin tức mới nhất từ chúng tôi!</div>
+                    <div class="newsletter_text"><p>Bạn sẽ không bị bỏ lỡ những thông tin sản phẩm tốt nhất nếu đăng ký nhận tin tức bằng email từ chúng tôi.</p></div>
+                    <div class="newsletter_form_container">
+                        <form action="#" id="newsletter_form" class="newsletter_form">
+                            <input type="email" class="newsletter_input" required="required">
+                            <button class="newsletter_button trans_200"><span>Đăng ký</span></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
